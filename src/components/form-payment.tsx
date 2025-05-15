@@ -1,79 +1,117 @@
-import { observer } from 'mobx-react-lite'
-import { useForm, Controller } from 'react-hook-form'
-import { IMaskInput } from 'react-imask'
-import { paymentStore } from '../stores/payment-store'
-import styles from './form-payment.module.css'
-import { useState, useEffect } from 'react'
+import { observer } from "mobx-react-lite";
+import { useForm, Controller } from "react-hook-form";
+import { IMaskInput } from "react-imask";
+import { paymentStore } from "../stores/payment-store";
+import styles from "./form-payment.module.css";
+import { useState, useEffect } from "react";
 
 interface FormValues {
-  amount: string
-  cardNumber: string
-  expiryDate: string
-  cvc: string
+  amount: string;
+  cardNumber: string;
+  expiryDate: string;
+  cvc: string;
 }
 
 const DESIGN_VARIANTS = [
-  { value: 'cartoon', label: 'Cartoon' },
-  { value: 'modern', label: 'Modern' },
-  { value: 'serious', label: 'Serious' },
-] as const
+  { value: "cartoon", label: "Cartoon" },
+  { value: "modern", label: "Modern" },
+  { value: "serious", label: "Serious" },
+] as const;
 
-type DesignVariant = typeof DESIGN_VARIANTS[number]['value']
+type DesignVariant = (typeof DESIGN_VARIANTS)[number]["value"];
 
 interface FormPaymentProps {
-  onThemeChange?: (theme: DesignVariant) => void
+  onThemeChange?: (theme: DesignVariant) => void;
 }
 
-export const FormPayment = observer(function FormPayment({ onThemeChange }: FormPaymentProps) {
-  const [design, setDesign] = useState<DesignVariant>('cartoon')
-  const { control, handleSubmit, formState: { errors, isSubmitting } } = useForm<FormValues>({
-    mode: 'onBlur',
-    defaultValues: { amount: '', cardNumber: '', expiryDate: '', cvc: '' },
-  })
+export const FormPayment = observer(function FormPayment({
+  onThemeChange,
+}: FormPaymentProps) {
+  const [design, setDesign] = useState<DesignVariant>("cartoon");
+  const {
+    control,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<FormValues>({
+    mode: "onBlur",
+    defaultValues: { amount: "", cardNumber: "", expiryDate: "", cvc: "" },
+  });
 
   useEffect(() => {
-    onThemeChange?.(design)
-  }, [design, onThemeChange])
+    onThemeChange?.(design);
+  }, [design, onThemeChange]);
 
   function onSubmit(data: FormValues) {
-    paymentStore.submitForm(data)
+    paymentStore.submitForm(data);
+    if (window) {
+      const payload = {
+        type: "payment-success",
+        payload: {
+          amount: data.amount,
+          cardNumber: data.cardNumber,
+          expiryDate: data.expiryDate,
+        },
+      }
+      window?.parent?.postMessage(payload, "*");
+    }
   }
 
   // Маппинг классов по версии дизайна
   const formClass =
-    design === 'cartoon' ? styles.formCartoon :
-    design === 'modern' ? styles.formModern :
-    styles.formSerious
+    design === "cartoon"
+      ? styles.formCartoon
+      : design === "modern"
+      ? styles.formModern
+      : styles.formSerious;
   const labelClass =
-    design === 'cartoon' ? styles.labelCartoon :
-    design === 'modern' ? styles.labelModern :
-    styles.labelSerious
+    design === "cartoon"
+      ? styles.labelCartoon
+      : design === "modern"
+      ? styles.labelModern
+      : styles.labelSerious;
   const inputClass =
-    design === 'cartoon' ? styles.inputCartoon :
-    design === 'modern' ? styles.inputModern :
-    styles.inputSerious
+    design === "cartoon"
+      ? styles.inputCartoon
+      : design === "modern"
+      ? styles.inputModern
+      : styles.inputSerious;
   const errorClass =
-    design === 'cartoon' ? styles.errorCartoon :
-    design === 'modern' ? styles.errorModern :
-    styles.errorSerious
+    design === "cartoon"
+      ? styles.errorCartoon
+      : design === "modern"
+      ? styles.errorModern
+      : styles.errorSerious;
   const buttonClass =
-    design === 'cartoon' ? styles.buttonCartoon :
-    design === 'modern' ? styles.buttonModern :
-    styles.buttonSerious
+    design === "cartoon"
+      ? styles.buttonCartoon
+      : design === "modern"
+      ? styles.buttonModern
+      : styles.buttonSerious;
 
   return (
-    <form className={formClass} onSubmit={handleSubmit(onSubmit)} aria-label="Payment form">
+    <form
+      className={formClass}
+      onSubmit={handleSubmit(onSubmit)}
+      aria-label="Payment form"
+    >
       <div style={{ marginBottom: 8 }}>
-        <label htmlFor="design-select" style={{ fontWeight: 500, marginRight: 8 }}>Design variant:</label>
+        <label
+          htmlFor="design-select"
+          style={{ fontWeight: 500, marginRight: 8 }}
+        >
+          Design variant:
+        </label>
         <select
           id="design-select"
           value={design}
-          onChange={e => setDesign(e.target.value as DesignVariant)}
-          style={{ padding: 4, borderRadius: 6, border: '1px solid #e0e0e0' }}
+          onChange={(e) => setDesign(e.target.value as DesignVariant)}
+          style={{ padding: 4, borderRadius: 6, border: "1px solid #e0e0e0" }}
           aria-label="Choose design variant"
         >
-          {DESIGN_VARIANTS.map(v => (
-            <option key={v.value} value={v.value}>{v.label}</option>
+          {DESIGN_VARIANTS.map((v) => (
+            <option key={v.value} value={v.value}>
+              {v.label}
+            </option>
           ))}
         </select>
       </div>
@@ -82,20 +120,32 @@ export const FormPayment = observer(function FormPayment({ onThemeChange }: Form
       <Controller
         name="amount"
         control={control}
-        rules={{ required: 'Enter amount' }}
+        rules={{ required: "Enter amount" }}
         render={({ field }) => (
-          <input {...field} type="number" min="1" placeholder="0" className={inputClass} aria-invalid={!!errors.amount} />
+          <input
+            {...field}
+            type="number"
+            min="1"
+            placeholder="0"
+            className={inputClass}
+            aria-invalid={!!errors.amount}
+          />
         )}
       />
-      {errors.amount && <span className={errorClass}>{errors.amount.message}</span>}
+      {errors.amount && (
+        <span className={errorClass}>{errors.amount.message}</span>
+      )}
 
       <label className={labelClass}>Card number</label>
       <Controller
         name="cardNumber"
         control={control}
         rules={{
-          required: 'Enter card number',
-          pattern: { value: /^\d{4} \d{4} \d{4} \d{4}$/, message: 'Format: 0000 0000 0000 0000' }
+          required: "Enter card number",
+          pattern: {
+            value: /^\d{4} \d{4} \d{4} \d{4}$/,
+            message: "Format: 0000 0000 0000 0000",
+          },
         }}
         render={({ field }) => (
           <IMaskInput
@@ -110,15 +160,20 @@ export const FormPayment = observer(function FormPayment({ onThemeChange }: Form
           />
         )}
       />
-      {errors.cardNumber && <span className={errorClass}>{errors.cardNumber.message}</span>}
+      {errors.cardNumber && (
+        <span className={errorClass}>{errors.cardNumber.message}</span>
+      )}
 
       <label className={labelClass}>Expiry date</label>
       <Controller
         name="expiryDate"
         control={control}
         rules={{
-          required: 'Enter expiry date',
-          pattern: { value: /^(0[1-9]|1[0-2])\/\d{2}$/, message: 'Format: MM/YY' }
+          required: "Enter expiry date",
+          pattern: {
+            value: /^(0[1-9]|1[0-2])\/\d{2}$/,
+            message: "Format: MM/YY",
+          },
         }}
         render={({ field }) => (
           <IMaskInput
@@ -133,15 +188,17 @@ export const FormPayment = observer(function FormPayment({ onThemeChange }: Form
           />
         )}
       />
-      {errors.expiryDate && <span className={errorClass}>{errors.expiryDate.message}</span>}
+      {errors.expiryDate && (
+        <span className={errorClass}>{errors.expiryDate.message}</span>
+      )}
 
       <label className={labelClass}>CVC</label>
       <Controller
         name="cvc"
         control={control}
         rules={{
-          required: 'Enter CVC',
-          pattern: { value: /^\d{3,4}$/, message: '3-4 digits' }
+          required: "Enter CVC",
+          pattern: { value: /^\d{3,4}$/, message: "3-4 digits" },
         }}
         render={({ field }) => (
           <IMaskInput
@@ -160,7 +217,9 @@ export const FormPayment = observer(function FormPayment({ onThemeChange }: Form
       />
       {errors.cvc && <span className={errorClass}>{errors.cvc.message}</span>}
 
-      <button className={buttonClass} type="submit" disabled={isSubmitting}>Pay</button>
+      <button className={buttonClass} type="submit" disabled={isSubmitting}>
+        Pay
+      </button>
     </form>
-  )
-}) 
+  );
+});
