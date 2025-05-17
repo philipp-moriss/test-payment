@@ -53,6 +53,7 @@ export const FormPayment = observer(function FormPayment({
         },
       }
       window?.parent?.postMessage(payload, "*");
+      console.log("SEND REQUEST TO SERVER");
     }
   }
 
