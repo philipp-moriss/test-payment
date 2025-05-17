@@ -27,7 +27,7 @@ interface FormPaymentProps {
 export const FormPayment = observer(function FormPayment({
   onThemeChange,
 }: FormPaymentProps) {
-  const [design, setDesign] = useState<DesignVariant>("cartoon");
+  const [design, setDesign] = useState<DesignVariant>("modern");
   const {
     control,
     handleSubmit,
