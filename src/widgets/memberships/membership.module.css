@@ -1,0 +1,17 @@
+.wrapper {
+    background-color: #fff;
+    padding: 40px 60px;
+    border-radius: 12px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 38px;
+    justify-content: center;
+    align-items: center;
+}
+
+@media (max-width: 1300px) {
+    .wrapper {
+        margin: 20px 20px 20px 20px;
+    }
+}

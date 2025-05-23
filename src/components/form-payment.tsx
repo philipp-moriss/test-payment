@@ -3,7 +3,8 @@ import { useForm, Controller } from "react-hook-form";
 import { IMaskInput } from "react-imask";
 import { paymentStore } from "../stores/payment-store";
 import styles from "./form-payment.module.css";
-import { useState, useEffect } from "react";
+import { Input } from "@/components/ui/input";
+import { Button } from "./ui/button";
 
 interface FormValues {
   amount: string;
@@ -12,22 +13,7 @@ interface FormValues {
   cvc: string;
 }
 
-const DESIGN_VARIANTS = [
-  { value: "cartoon", label: "Cartoon" },
-  { value: "modern", label: "Modern" },
-  { value: "serious", label: "Serious" },
-] as const;
-
-type DesignVariant = (typeof DESIGN_VARIANTS)[number]["value"];
-
-interface FormPaymentProps {
-  onThemeChange?: (theme: DesignVariant) => void;
-}
-
-export const FormPayment = observer(function FormPayment({
-  onThemeChange,
-}: FormPaymentProps) {
-  const [design, setDesign] = useState<DesignVariant>("modern");
+export const FormPayment = observer(function FormPayment() {
   const {
     control,
     handleSubmit,
@@ -36,10 +22,6 @@ export const FormPayment = observer(function FormPayment({
     mode: "onBlur",
     defaultValues: { amount: "", cardNumber: "", expiryDate: "", cvc: "" },
   });
-
-  useEffect(() => {
-    onThemeChange?.(design);
-  }, [design, onThemeChange]);
 
   function onSubmit(data: FormValues) {
     paymentStore.submitForm(data);
@@ -51,93 +33,39 @@ export const FormPayment = observer(function FormPayment({
           cardNumber: data.cardNumber,
           expiryDate: data.expiryDate,
         },
-      }
+      };
       window?.parent?.postMessage(payload, "*");
       console.log("SEND REQUEST TO SERVER");
     }
   }
 
-  // Маппинг классов по версии дизайна
-  const formClass =
-    design === "cartoon"
-      ? styles.formCartoon
-      : design === "modern"
-      ? styles.formModern
-      : styles.formSerious;
-  const labelClass =
-    design === "cartoon"
-      ? styles.labelCartoon
-      : design === "modern"
-      ? styles.labelModern
-      : styles.labelSerious;
-  const inputClass =
-    design === "cartoon"
-      ? styles.inputCartoon
-      : design === "modern"
-      ? styles.inputModern
-      : styles.inputSerious;
-  const errorClass =
-    design === "cartoon"
-      ? styles.errorCartoon
-      : design === "modern"
-      ? styles.errorModern
-      : styles.errorSerious;
-  const buttonClass =
-    design === "cartoon"
-      ? styles.buttonCartoon
-      : design === "modern"
-      ? styles.buttonModern
-      : styles.buttonSerious;
-
   return (
     <form
-      className={formClass}
+      className={styles.formWrapper}
       onSubmit={handleSubmit(onSubmit)}
       aria-label="Payment form"
     >
-      <div style={{ marginBottom: 8 }}>
-        <label
-          htmlFor="design-select"
-          style={{ fontWeight: 500, marginRight: 8 }}
-        >
-          Design variant:
-        </label>
-        <select
-          id="design-select"
-          value={design}
-          onChange={(e) => setDesign(e.target.value as DesignVariant)}
-          style={{ padding: 4, borderRadius: 6, border: "1px solid #e0e0e0" }}
-          aria-label="Choose design variant"
-        >
-          {DESIGN_VARIANTS.map((v) => (
-            <option key={v.value} value={v.value}>
-              {v.label}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <label className={labelClass}>Amount</label>
+      <label className={styles.formLabel}>Amount</label>
       <Controller
         name="amount"
         control={control}
         rules={{ required: "Enter amount" }}
         render={({ field }) => (
-          <input
+          <Input
             {...field}
             type="number"
             min="1"
             placeholder="0"
-            className={inputClass}
+            className={styles.inputCartoon}
             aria-invalid={!!errors.amount}
           />
         )}
       />
       {errors.amount && (
-        <span className={errorClass}>{errors.amount.message}</span>
+        <span className={styles.errorCartoon}>{errors.amount.message}</span>
       )}
 
-      <label className={labelClass}>Card number</label>
+      <label className={styles.formLabel}>Card number</label>
       <Controller
         name="cardNumber"
         control={control}
@@ -154,7 +82,8 @@ export const FormPayment = observer(function FormPayment({
             mask="0000 0000 0000 0000"
             unmask={false}
             placeholder="0000 0000 0000 0000"
-            className={inputClass}
+            inputRef={field.ref}
+            className={styles.inputCartoon}
             aria-invalid={!!errors.cardNumber}
             inputMode="numeric"
             onAccept={field.onChange}
@@ -162,10 +91,10 @@ export const FormPayment = observer(function FormPayment({
         )}
       />
       {errors.cardNumber && (
-        <span className={errorClass}>{errors.cardNumber.message}</span>
+        <span className={styles.errorCartoon}>{errors.cardNumber.message}</span>
       )}
 
-      <label className={labelClass}>Expiry date</label>
+      <label className={styles.formLabel}>Expiry date</label>
       <Controller
         name="expiryDate"
         control={control}
@@ -182,7 +111,8 @@ export const FormPayment = observer(function FormPayment({
             mask="00/00"
             unmask={false}
             placeholder="MM/YY"
-            className={inputClass}
+            inputRef={field.ref}
+            className={styles.inputCartoon}
             aria-invalid={!!errors.expiryDate}
             inputMode="numeric"
             onAccept={field.onChange}
@@ -190,10 +120,10 @@ export const FormPayment = observer(function FormPayment({
         )}
       />
       {errors.expiryDate && (
-        <span className={errorClass}>{errors.expiryDate.message}</span>
+        <span className={styles.errorCartoon}>{errors.expiryDate.message}</span>
       )}
 
-      <label className={labelClass}>CVC</label>
+      <label className={styles.formLabel}>CVC</label>
       <Controller
         name="cvc"
         control={control}
@@ -207,7 +137,8 @@ export const FormPayment = observer(function FormPayment({
             mask="0000"
             unmask={false}
             placeholder="CVC"
-            className={inputClass}
+            inputRef={field.ref}
+            className={styles.inputCartoon}
             aria-invalid={!!errors.cvc}
             inputMode="numeric"
             onAccept={field.onChange}
@@ -216,11 +147,11 @@ export const FormPayment = observer(function FormPayment({
           />
         )}
       />
-      {errors.cvc && <span className={errorClass}>{errors.cvc.message}</span>}
+      {errors.cvc && <span className={styles.errorCartoon}>{errors.cvc.message}</span>}
 
-      <button className={buttonClass} type="submit" disabled={isSubmitting}>
-        Pay
-      </button>
+      <div className="flex justify-end">
+        <Button type="submit" variant="orange" disabled={isSubmitting}>Donate</Button>
+      </div>
     </form>
   );
 });

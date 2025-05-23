@@ -1,7 +1,7 @@
 .center {
-  min-height: 100vh;
-  min-width: 100vw;
+  max-width: 1282px;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
+  gap: 20px;
+  margin: 0 auto;
 } 
