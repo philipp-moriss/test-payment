@@ -3,7 +3,7 @@ import { MembershipWrapper } from "../membership-wrapper";
 import { membershipStore } from "@/stores/membership-store";
 
 export const OtherToggle = observer(() => {
-  const { otherAmount, isOther } = membershipStore;
+  const { isOther } = membershipStore;
 
   const handleOtherChangeByClick = () => {
     membershipStore.setIsOther(true)
