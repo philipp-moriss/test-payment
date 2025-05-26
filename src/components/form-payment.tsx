@@ -1,37 +1,56 @@
 import { observer } from "mobx-react-lite";
 import { useForm, Controller } from "react-hook-form";
-import { IMaskInput } from "react-imask";
 import { paymentStore } from "../stores/payment-store";
 import styles from "./form-payment.module.css";
 import { Input } from "@/components/ui/input";
 import { Button } from "./ui/button";
+import { membershipStore } from "@/stores/membership-store";
 
 interface FormValues {
-  amount: string;
-  cardNumber: string;
-  expiryDate: string;
-  cvc: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  country: string;
 }
 
-export const FormPayment = observer(function FormPayment() {
+export const FormPayment = observer(() => {
   const {
     control,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({
     mode: "onBlur",
-    defaultValues: { amount: "", cardNumber: "", expiryDate: "", cvc: "" },
+    defaultValues: { firstName: "", lastName: "", email: "", country: "" },
   });
+  const { isOther, isMonthly, oneTimeAmount, selectedMembership, otherAmount } = membershipStore;
+
+  const oneTimeSum = oneTimeAmount?.price;
+  const monthlyAmountDollars = selectedMembership?.price.dollars;
+  const monthlyAmount = isOther ? otherAmount?.price : monthlyAmountDollars;
+
+  const dynamicCurrency = isOther ? otherAmount?.currency : oneTimeAmount?.currency;
+  const currentAmount =  isMonthly ? monthlyAmount : oneTimeSum;
+  const currentCurrency = dynamicCurrency ? dynamicCurrency : 'dollars';
 
   function onSubmit(data: FormValues) {
-    paymentStore.submitForm(data);
+    if (!currentAmount) {
+      alert('Please select a membership or other amount');
+      return;
+    }
+    paymentStore.submitForm({
+      firstName: data.firstName,
+      lastName: data.lastName,
+      email: data.email,
+      country: data.country,
+    });
     if (window) {
       const payload = {
         type: "payment-success",
         payload: {
-          amount: data.amount,
-          cardNumber: data.cardNumber,
-          expiryDate: data.expiryDate,
+          firstName: data.firstName,
+          lastName: data.lastName,
+          email: data.email,
+          country: data.country,
         },
       };
       window?.parent?.postMessage(payload, "*");
@@ -45,112 +64,90 @@ export const FormPayment = observer(function FormPayment() {
       onSubmit={handleSubmit(onSubmit)}
       aria-label="Payment form"
     >
-      <label className={styles.formLabel}>Amount</label>
+      <label className={styles.formLabel}>First Name</label>
       <Controller
-        name="amount"
+        name="firstName"
         control={control}
-        rules={{ required: "Enter amount" }}
+        rules={{ required: "Enter first name" }}
         render={({ field }) => (
           <Input
             {...field}
-            type="number"
-            min="1"
-            placeholder="0"
+            type="text"
             className={styles.inputCartoon}
-            aria-invalid={!!errors.amount}
+            aria-invalid={!!errors.firstName}
           />
         )}
       />
-      {errors.amount && (
-        <span className={styles.errorCartoon}>{errors.amount.message}</span>
+      {errors.firstName && (
+        <span className={styles.errorCartoon}>{errors.firstName.message}</span>
       )}
 
-      <label className={styles.formLabel}>Card number</label>
+      <label className={styles.formLabel}>Last Name</label>
       <Controller
-        name="cardNumber"
+        name="lastName"
+        control={control}
+        rules={{ required: "Enter last name" }}
+        render={({ field }) => (
+          <Input
+            {...field}
+            type="text"
+            className={styles.inputCartoon}
+            aria-invalid={!!errors.lastName}
+          />
+        )}
+      />
+      {errors.lastName && (
+        <span className={styles.errorCartoon}>{errors.lastName.message}</span>
+      )}
+
+      <label className={styles.formLabel}>Email</label>
+      <Controller
+        name="email"
         control={control}
         rules={{
-          required: "Enter card number",
+          required: "Enter email",
           pattern: {
-            value: /^\d{4} \d{4} \d{4} \d{4}$/,
-            message: "Format: 0000 0000 0000 0000",
+            value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+            message: "Invalid email address",
           },
         }}
         render={({ field }) => (
-          <IMaskInput
+          <Input
             {...field}
-            mask="0000 0000 0000 0000"
-            unmask={false}
-            placeholder="0000 0000 0000 0000"
-            inputRef={field.ref}
+            type="email"
             className={styles.inputCartoon}
-            aria-invalid={!!errors.cardNumber}
-            inputMode="numeric"
-            onAccept={field.onChange}
+            aria-invalid={!!errors.email}
           />
         )}
       />
-      {errors.cardNumber && (
-        <span className={styles.errorCartoon}>{errors.cardNumber.message}</span>
+      {errors.email && (
+        <span className={styles.errorCartoon}>{errors.email.message}</span>
       )}
 
-      <label className={styles.formLabel}>Expiry date</label>
+      <label className={styles.formLabel}>Country</label>
       <Controller
-        name="expiryDate"
+        name="country"
         control={control}
         rules={{
-          required: "Enter expiry date",
-          pattern: {
-            value: /^(0[1-9]|1[0-2])\/\d{2}$/,
-            message: "Format: MM/YY",
-          },
+          required: "Enter country",
         }}
         render={({ field }) => (
-          <IMaskInput
+          <Input
             {...field}
-            mask="00/00"
-            unmask={false}
-            placeholder="MM/YY"
-            inputRef={field.ref}
+            type="text"
             className={styles.inputCartoon}
-            aria-invalid={!!errors.expiryDate}
-            inputMode="numeric"
-            onAccept={field.onChange}
+            aria-invalid={!!errors.country}
           />
         )}
       />
-      {errors.expiryDate && (
-        <span className={styles.errorCartoon}>{errors.expiryDate.message}</span>
+      {errors.country && (
+        <span className={styles.errorCartoon}>{errors.country.message}</span>
       )}
-
-      <label className={styles.formLabel}>CVC</label>
-      <Controller
-        name="cvc"
-        control={control}
-        rules={{
-          required: "Enter CVC",
-          pattern: { value: /^\d{3,4}$/, message: "3-4 digits" },
-        }}
-        render={({ field }) => (
-          <IMaskInput
-            {...field}
-            mask="0000"
-            unmask={false}
-            placeholder="CVC"
-            inputRef={field.ref}
-            className={styles.inputCartoon}
-            aria-invalid={!!errors.cvc}
-            inputMode="numeric"
-            onAccept={field.onChange}
-            type="password"
-            maxLength={4}
-          />
-        )}
-      />
-      {errors.cvc && <span className={styles.errorCartoon}>{errors.cvc.message}</span>}
 
       <div className="flex justify-end">
-        <Button type="submit" variant="orange" disabled={isSubmitting}>Donate</Button>
+        <Button type="submit" variant="orange" disabled={isSubmitting}>
+          Donate {currentAmount} {currentCurrency} {isMonthly ? 'monthly' : 'one-time'}
+        </Button>
       </div>
     </form>
   );

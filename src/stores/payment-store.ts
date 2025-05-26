@@ -1,10 +1,10 @@
 import { makeAutoObservable } from 'mobx'
 
 export interface PaymentFormData {
-  amount: string
-  cardNumber: string
-  expiryDate: string
-  cvc: string
+  firstName: string
+  lastName: string
+  email: string
+  country: string
 }
 
 class PaymentStore {

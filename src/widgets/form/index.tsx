@@ -7,9 +7,11 @@ import { FormPayment } from "../../components/form-payment";
 export const FormPaymentWidget = observer(() => {
   return (
     <div className="flex flex-col gap-[20px]">
-      <div className="flex justify-left">
-        <h3 className="text-[38px] font-bold">Personal Details</h3>
-      </div>
+      {paymentStore.step === "form" && (
+        <div className="flex justify-left">
+          <h3 className="text-[38px] font-bold">Personal Details</h3>
+        </div>
+      )}
       {paymentStore.step === "loading" && <Loader />}
       {paymentStore.step === "success" && <Success />}
       {paymentStore.step === "form" && <FormPayment />}

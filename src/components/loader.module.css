@@ -9,8 +9,8 @@
 .spinner {
   width: 48px;
   height: 48px;
-  border: 5px solid #e0e0e0;
-  border-top: 5px solid #7c3aed;
+  border: 5px solid var(--color-muted, #e0e0e0);
+  border-top: 5px solid var(--primary, #1F1B61);
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
@@ -19,7 +19,7 @@
   100% { transform: rotate(360deg);}
 }
 .text {
-  color: #6366f1;
+  color: var(--primary, #1F1B61);
   font-size: 18px;
   font-weight: 500;
 } 

@@ -4,7 +4,7 @@ export function Loader() {
   return (
     <div className={styles.container} role="status" aria-live="polite">
       <div className={styles.spinner} />
-      <span className={styles.text}>Обработка платежа...</span>
+      <span className={styles.text}>Processing payment...</span>
     </div>
   )
 } 

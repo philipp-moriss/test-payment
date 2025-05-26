@@ -9,3 +9,14 @@
   border: 1px solid #D6D6D6;
   background-color: #fff;
 }
+
+.wrapperActive:hover {
+  border: 1px solid #1F1B61;
+  /* background-color: #F2F1FF; */
+  cursor: pointer;
+}
+
+.wrapperSelected {
+  border: 1px solid #1F1B61;
+  background-color: #F2F1FF;
+}

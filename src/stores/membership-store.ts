@@ -1,69 +1,107 @@
 import { makeAutoObservable } from 'mobx'
 
 
-export type MembershipPrice = {
+export type Membership = {
+  id: number,
   price: {
     dollars: number,
     nis: number,
   }
 }
 
-export type OtherPrice = {
+export type OtherAmount = {
+  price: number;
+  currency: 'dollars' | 'nis';
+}
+
+export type OneTimeAmount = {
   price: number;
   currency: 'dollars' | 'nis';
 }
 
 class MembershipStore {
-  isMonthly: boolean = false
+  isMonthly: boolean = true
   isOther: boolean = false
 
-  monthlyPrice: MembershipPrice[] = [
+  memberships: Membership[] = [
     {
+      id: 1,
       price: {
         dollars: 1,
         nis: 4,
       }
     },
     {
+      id: 2,
       price: {
         dollars: 5,
         nis: 20,
       }
     },
     {
+      id: 3,
       price: {
         dollars: 25,
         nis: 100,
       }
     },
     {
+      id: 4,
       price: {
         dollars: 100,
         nis: 400,
       }
     }
   ]
-  otherPrice: OtherPrice = {
-    price: 100,
-    currency: 'dollars'
-  }
+  otherAmount: OtherAmount | null = null
+  oneTimeAmount: OneTimeAmount | null = null
 
-  selectedPrice: MembershipPrice | OtherPrice = this.monthlyPrice[0]
+  selectedMembership: Membership | null = null
 
   constructor() {
     makeAutoObservable(this)
   }
 
   setIsMonthly = (isMonthly: boolean) => {
+    this.isOther = false
+    this.oneTimeAmount = null
+    this.otherAmount = null
+    this.selectedMembership = null
     this.isMonthly = isMonthly
   }
 
   setIsOther = (isOther: boolean) => {
+    this.oneTimeAmount = null
+    this.otherAmount = null
+    this.selectedMembership = null
     this.isOther = isOther
   }
 
-  setSelectedPrice = (price: MembershipPrice | OtherPrice) => {
-    this.selectedPrice = price
+  setSelectedMembership = (membershipId: Membership['id']) => {
+    const membership = this.memberships.find(membership => membership.id === membershipId)
+    if (!membership) {
+      return
+    }
+    this.isOther = false
+    if (this.selectedMembership?.id === membershipId) {
+      this.selectedMembership = null
+    } else {
+      this.selectedMembership = {...membership}
+    }
+  }
+
+  setOtherAmount = (amount: number, currency: 'dollars' | 'nis') => {
+    this.otherAmount = {
+      price: amount,
+      currency: currency
+    }
+  }
+
+  setOneTimeAmount = (amount: number, currency: 'dollars' | 'nis') => {
+    this.oneTimeAmount = {
+      price: amount,
+      currency: currency
+    }
   }
 }
 
