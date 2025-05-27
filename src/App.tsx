@@ -1,8 +1,7 @@
 import { observer } from "mobx-react-lite";
 import { useEffect } from "react";
-import styles from "./App.module.css";
-import { FormPaymentWidget } from "./widgets/form";
-import { MembershipWidget } from "./widgets/memberships";
+import { Main } from "./widgets/main";
+import { Payment } from "./widgets/payment";
 
 const App = observer(function App() {
   useEffect(() => {
@@ -20,10 +19,10 @@ const App = observer(function App() {
   }, []);
 
   return (
-    <div className={styles.center}>
-      <MembershipWidget />
-      <FormPaymentWidget />
-    </div>
+    <>
+      <Main />
+      <Payment />
+    </>
   );
 });
 

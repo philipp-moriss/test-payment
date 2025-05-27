@@ -13,7 +13,7 @@ export const MembershipWidget = observer(() => {
   };
   return (
     <div className={styles.wrapper}>
-      <Tabs defaultValue="monthly" onValueChange={onChange}>
+      <Tabs defaultValue="monthly" className="gap-[0px]" onValueChange={onChange}>
         <div className="w-full flex justify-center align-center">
           <TabsList className="flex justify-center align-center gap-4 max-w-[262px] bg-[#F2F1FF]">
             <TabsTrigger value="monthly">Monthly</TabsTrigger>

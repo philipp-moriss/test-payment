@@ -22,19 +22,22 @@ export const FormPayment = observer(() => {
     mode: "onBlur",
     defaultValues: { firstName: "", lastName: "", email: "", country: "" },
   });
-  const { isOther, isMonthly, oneTimeAmount, selectedMembership, otherAmount } = membershipStore;
+  const { isOther, isMonthly, oneTimeAmount, selectedMembership, otherAmount } =
+    membershipStore;
 
   const oneTimeSum = oneTimeAmount?.price;
   const monthlyAmountDollars = selectedMembership?.price.dollars;
   const monthlyAmount = isOther ? otherAmount?.price : monthlyAmountDollars;
 
-  const dynamicCurrency = isOther ? otherAmount?.currency : oneTimeAmount?.currency;
-  const currentAmount =  isMonthly ? monthlyAmount : oneTimeSum;
-  const currentCurrency = dynamicCurrency ? dynamicCurrency : 'dollars';
+  const dynamicCurrency = isOther
+    ? otherAmount?.currency
+    : oneTimeAmount?.currency;
+  const currentAmount = isMonthly ? monthlyAmount : oneTimeSum;
+  const currentCurrency = dynamicCurrency ? dynamicCurrency : "dollars";
 
   function onSubmit(data: FormValues) {
     if (!currentAmount) {
-      alert('Please select a membership or other amount');
+      alert("Please select a membership or other amount");
       return;
     }
     paymentStore.submitForm({
@@ -144,9 +147,18 @@ export const FormPayment = observer(() => {
         <span className={styles.errorCartoon}>{errors.country.message}</span>
       )}
 
-      <div className="flex justify-end">
-        <Button type="submit" variant="orange" disabled={isSubmitting}>
-          Donate {currentAmount} {currentCurrency} {isMonthly ? 'monthly' : 'one-time'}
+      <div className="flex justify-end w-[100%] h-content">
+        <Button
+          type="submit"
+          variant="orange"
+          className="w-[100%]"
+          style={{ height: "auto" }}
+          disabled={isSubmitting}
+        >
+          <span className="text-[16px] font-medium text-center text-wrap text-[#fff]">
+            Donate {currentAmount} {currentCurrency}{" "}
+            {isMonthly ? "monthly" : "one-time"}
+          </span>
         </Button>
       </div>
     </form>

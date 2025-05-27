@@ -1,0 +1,58 @@
+.wrapper {
+  max-width: 1322px;
+  margin: 0 auto;
+  border-radius: 12px;
+  position: relative;
+  top: -100px;
+}
+
+.container {
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  background-color: #FFFFFFE5;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+  gap: 30px;
+}
+
+.title {
+  font-weight: 700;
+  font-size: 48px;
+  line-height: 100%;
+  letter-spacing: 0%;
+  text-align: center;
+  color: #000000;
+}
+
+.subtitle {
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 100%;
+  letter-spacing: 0%;
+  text-align: center;
+  color: #737373;
+}
+
+@media (max-width: 768px) {
+  .wrapper {
+    position: static;
+    max-width: 100%;
+    border-radius: 0;
+    top: 0;
+  }
+  .container {
+    padding: 16px;
+    gap: 16px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+  }
+  .title {
+    font-size: 28px;
+    line-height: 110%;
+  }
+  .subtitle {
+    font-size: 16px;
+    line-height: 120%;
+  }
+}
