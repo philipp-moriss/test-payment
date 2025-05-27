@@ -21,6 +21,25 @@
   }
 }
 
+@media (max-width: 600px) {
+  .formWrapper {
+    padding: 16px 8px;
+    border-radius: 10px;
+    gap: 8px;
+  }
+  .formLabel {
+    font-size: 16px;
+  }
+  .inputCartoon {
+    font-size: 15px;
+    padding: 10px 12px;
+    border-radius: 8px;
+  }
+  .errorCartoon {
+    font-size: 13px;
+  }
+}
+
 .formLabel {
   font-size: 24px;
   color: #000;
