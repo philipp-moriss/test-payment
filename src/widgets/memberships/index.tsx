@@ -4,7 +4,6 @@ import { MembershipMonth } from "./ui/membership-month";
 import { OneTime } from "./ui/one-time";
 import { membershipStore } from "@/stores/membership-store";
 import { observer } from "mobx-react-lite";
-import { motion } from "motion/react";
 
 export const MembershipWidget = observer(() => {
   const { setIsMonthly } = membershipStore;
